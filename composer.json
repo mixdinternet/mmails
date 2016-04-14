@@ -1,0 +1,23 @@
+{
+    "name": "mixdinternet/mmails",
+    "description": "Permite a configuração dos e-mails no Admix",
+    "keywords": ["laravel", "mail"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Irineu Martins Junior",
+            "email": "irineu@mixd.com.br",
+            "homepage": "http://www.mixd.com.br/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "laravel/framework": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mixdinternet\\Mmails\\": "src/"
+        }
+    }
+}
