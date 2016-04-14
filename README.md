@@ -1,8 +1,8 @@
-## Mconfig
+## Mmails
 
-[![Total Downloads](https://poser.pugx.org/mixdinternet/mconfig/d/total.svg)](https://packagist.org/packages/mixdinternet/mconfig)
-[![Latest Stable Version](https://poser.pugx.org/mixdinternet/mconfig/v/stable.svg)](https://packagist.org/packages/mixdinternet/mconfig)
-[![License](https://poser.pugx.org/mixdinternet/mconfig/license.svg)](https://packagist.org/packages/mixdinternet/mconfig)
+[![Total Downloads](https://poser.pugx.org/mixdinternet/mmails/d/total.svg)](https://packagist.org/packages/mixdinternet/mmails)
+[![Latest Stable Version](https://poser.pugx.org/mixdinternet/mmails/v/stable.svg)](https://packagist.org/packages/mixdinternet/mmails)
+[![License](https://poser.pugx.org/mixdinternet/mmails/license.svg)](https://packagist.org/packages/mixdinternet/mmails)
 
 ![Área administrativa](http://mixd.com.br/github/1a1944e9d3d545eee7b3929295fabb37.png "Área administrativa")
 
@@ -14,24 +14,31 @@ Adicione no seu composer.json
 
 ```js
   "require": {
-    "mixdinternet/mconfig": "0.1.*"
+    "mixdinternet/mmails": "0.1.*"
   }
 ```
 
 ou
 
 ```js
-  composer require mixdinternet/mconfig
+  composer require mixdinternet/mmails
 ```
 
 ## Service Provider
 
 Abra o arquivo `config/app.php` e adicione
 
-`Mixdinternet\Mconfig\Providers\MconfigServiceProvider::class`
+`Mixdinternet\Mmails\Providers\MmailsServiceProvider::class`
 
-Veja a configuração de cada módulo
+## Facade
 
-[Mcache](https://github.com/mixdinternet/mcache)
+Abra o arquivo `config/app.php` e adicione
 
-[Maudit](https://github.com/mixdinternet/maudit)
+`'Mmail' => Mixdinternet\Mmails\Facade\MmailFacade::class`
+
+## Publicando os arquivos
+
+```
+$ php artisan vendor:publish --provider="Mixdinternet\Mmails\Providers\MmailsServiceProvider" --tags="migrations"
+```
+
