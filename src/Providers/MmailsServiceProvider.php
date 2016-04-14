@@ -36,6 +36,9 @@ class MmailsServiceProvider extends ServiceProvider
         $this->app->bind('mmail', function ($app) {
             return new \Mixdinternet\Mmails\Services\Mmail();
         });
+
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('Mmail', \Mixdinternet\Mmails\Facade\MmailFacade::class);
     }
 
     protected function setMenu()
