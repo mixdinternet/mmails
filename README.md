@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://poser.pugx.org/mixdinternet/mmails/v/stable.svg)](https://packagist.org/packages/mixdinternet/mmails)
 [![License](https://poser.pugx.org/mixdinternet/mmails/license.svg)](https://packagist.org/packages/mixdinternet/mmails)
 
-![Área administrativa](http://mixd.com.br/github/1a1944e9d3d545eee7b3929295fabb37.png "Área administrativa")
+![Área administrativa](http://mixd.com.br/github/bcc28579938d4ddbeefcff289b456319.png "Área administrativa")
 
 Agrupa os módulos de configuração do Admix.
 
