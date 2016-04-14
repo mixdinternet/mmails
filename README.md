@@ -30,12 +30,6 @@ Abra o arquivo `config/app.php` e adicione
 
 `Mixdinternet\Mmails\Providers\MmailsServiceProvider::class`
 
-## Facade
-
-Abra o arquivo `config/app.php` e adicione
-
-`'Mmail' => Mixdinternet\Mmails\Facade\MmailFacade::class`
-
 ## Publicando os arquivos
 
 ```
