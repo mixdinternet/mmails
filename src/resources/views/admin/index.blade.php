@@ -12,13 +12,13 @@
         @include('admin.partials.actions.btn.trash', ['route' => route('admin.mmails.trash')])
     @endif
     @if($trash)
-        @include('admin.partials.actions.btn.list', ['route' => 'admin.mmails.index'])
+        @include('admin.partials.actions.btn.list', ['route' => route('admin.mmails.index')])
     @endif
 @endsection
 
 @section('btn-delete-all')
     @if((!checkRule('admin.mmails.destroy')) && (!$trash))
-        @include('admin.partials.actions.btn.delete-all', ['route' => 'admin.mmails.destroy'])
+        @include('admin.partials.actions.btn.delete-all', ['route' => route('admin.mmails.destroy')])
     @endif
 @endsection
 
@@ -91,10 +91,10 @@
                             @include('admin.partials.actions.btn.edit', ['route' => route('admin.mmails.edit', $mmail->id)])
                         @endif
                         @if((!checkRule('admin.mmails.destroy')) && (!$trash))
-                            @include('admin.partials.actions.btn.delete', ['route' => 'admin.mmails.destroy', 'id' => $mmail->id])
+                            @include('admin.partials.actions.btn.delete', ['route' => route('admin.mmails.destroy'), 'id' => $mmail->id])
                         @endif
                         @if($trash)
-                            @include('admin.partials.actions.btn.restore', ['route' => 'admin.mmails.restore', 'id' => $mmail->id])
+                            @include('admin.partials.actions.btn.restore', ['route' => route('admin.mmails.restore', $mmail->id)])
                         @endif
                     </td>
                 </tr>
