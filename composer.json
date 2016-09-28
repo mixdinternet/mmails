@@ -1,6 +1,6 @@
 {
     "name": "mixdinternet/mmails",
-    "description": "Permite a configuração dos e-mails no Admix",
+    "description": "Permite a configuração dos e-mails no admix",
     "keywords": ["laravel", "mail"],
     "license": "MIT",
     "authors": [
@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.1.*"
+        "laravel/framework": "~5.0"
     },
     "autoload": {
         "psr-4": {
