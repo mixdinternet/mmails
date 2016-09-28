@@ -4,7 +4,7 @@ namespace Mixdinternet\Mmails\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Mixdinternet\Mmails\Mmail;
-use Menu;
+use Pingpong\Menus\MenuFacade as Menu;
 
 class MmailsServiceProvider extends ServiceProvider
 {
