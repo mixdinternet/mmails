@@ -14,7 +14,7 @@ Adicione no seu composer.json
 
 ```js
   "require": {
-    "mixdinternet/mmails": "0.1.*"
+    "mixdinternet/mmails": "0.2.*"
   }
 ```
 
