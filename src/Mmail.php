@@ -4,13 +4,12 @@ namespace Mixdinternet\Mmails;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Cviebrock\EloquentSluggable\SluggableTrait;
-use Cviebrock\EloquentSluggable\SluggableInterface;
+use Cviebrock\EloquentSluggable\Sluggable;
 use Venturecraft\Revisionable\RevisionableTrait;
 
-class Mmail extends Model implements SluggableInterface
+class Mmail extends Model
 {
-    use SoftDeletes, SluggableTrait, RevisionableTrait;
+    use SoftDeletes, Sluggable, RevisionableTrait;
 
     protected $revisionCreationsEnabled = true;
 
@@ -23,9 +22,22 @@ class Mmail extends Model implements SluggableInterface
         , 'subject' => 'assunto'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = [
+        'deleted_at'
+    ];
 
-    protected $fillable = ['status', 'name', 'to', 'toName', 'cc', 'bcc', 'subject'];
+    protected $fillable = [
+        'status', 'name', 'to', 'toName', 'cc', 'bcc', 'subject'
+    ];
+
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
 
     public function scopeSort($query, $fields = [])
     {
@@ -55,5 +67,4 @@ class Mmail extends Model implements SluggableInterface
     {
         return $this->name;
     }
-
 }

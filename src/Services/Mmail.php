@@ -13,7 +13,7 @@ class Mmail
 
     }
 
-    public function send($data, $slug = null, $from = [], $template = 'emails.default')
+    public function send($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
     {
         $db = $this->findSlug($slug);
 
@@ -32,7 +32,7 @@ class Mmail
         });
     }
 
-    public function queue($data, $slug = null, $from = [], $template = 'emails.default')
+    public function queue($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
     {
         $db = $this->findSlug($slug);
 
@@ -51,7 +51,7 @@ class Mmail
         });
     }
 
-    public function later($seconds, $data, $slug = null, $from = [], $template = 'emails.default')
+    public function later($seconds, $data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
     {
         $db = $this->findSlug($slug);
 

@@ -3,34 +3,23 @@
 namespace Mixdinternet\Mmails\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Mixdinternet\Mmails\Mmail;
-use Pingpong\Menus\MenuFacade as Menu;
+use Menu;
 
 class MmailsServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     *
-     * @return void
-     */
     public function boot()
     {
         $this->setMenu();
 
         $this->setRoutes();
 
-        $this->setRouterBind();
-
         $this->loadViews();
+
+        $this->loadMigrations();
 
         $this->publish();
     }
 
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
     public function register()
     {
         $this->app->bind('mmail', function ($app) {
@@ -63,26 +52,19 @@ class MmailsServiceProvider extends ServiceProvider
         if (!$this->app->routesAreCached()) {
             $this->app->router->group(['namespace' => 'Mixdinternet\Mmails\Http\Controllers'],
                 function () {
-                    require __DIR__ . '/../Http/routes.php';
+                    require __DIR__ . '/../routes/web.php';
                 });
         }
-    }
-
-    protected function setRouterBind()
-    {
-        $this->app->router->bind('mmails', function ($id) {
-            $mmail = Mmail::find($id);
-            if (!$mmail) {
-                abort(404);
-            }
-
-            return $mmail;
-        });
     }
 
     protected function loadViews()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'mixdinternet/mmails');
+    }
+
+    protected function loadMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     protected function publish()

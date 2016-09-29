@@ -4,13 +4,13 @@ namespace Mixdinternet\Mmails\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Caffeinated\Flash\Facades\Flash;
-use App\Http\Controllers\AdminController;
+use Mixdinternet\Admix\Http\Controllers\AdmixController;
 use Mixdinternet\Mmails\Mmail as MmailModel;
 use Mixdinternet\Mmails\Http\Requests\CreateEditMmailsRequest;
+use Mmail;
 
-class MmailsAdminController extends AdminController
+class MmailsAdminController extends AdmixController
 {
-
     public function __construct()
     {
 
@@ -38,14 +38,14 @@ class MmailsAdminController extends AdminController
         $view['search'] = $search;
         $view['mmails'] = $mmails;
 
-        return view('mixdinternet/mmails::admin.index', $view);
+        return view('mixdinternet/mmails::index', $view);
     }
 
     public function create(MmailModel $mmail)
     {
         $view['mmail'] = $mmail;
 
-        return view('mixdinternet/mmails::admin.form', $view);
+        return view('mixdinternet/mmails::form', $view);
     }
 
     public function store(CreateEditMmailsRequest $request)
@@ -63,7 +63,7 @@ class MmailsAdminController extends AdminController
     {
         $view['mmail'] = $mmail;
 
-        return view('mixdinternet/mmails::admin.form', $view);
+        return view('mixdinternet/mmails::form', $view);
     }
 
     public function update(MmailModel $mmail, CreateEditMmailsRequest $request)
