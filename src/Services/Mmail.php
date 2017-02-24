@@ -8,22 +8,35 @@ use Mail;
 
 class Mmail
 {
-    public function send($data, $slug = null, $from = [], $template = 'emails.default')
+    public function send($data, $slug = null, $from = [], $template = 'emails.default', $attachments = [])
     {
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::send($template, $data, $this->getMaiable($this->findSlug($slug), $this->convertFrom($from)));
+        return Mail::send(
+                $template,
+                $data,
+                $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+            );
     }
 
-    public function queue($data, $slug = null, $from = [], $template = 'emails.default')
+    public function queue($data, $slug = null, $from = [], $template = 'emails.default', $attachments = [])
     {
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::queue($template, $data, $this->getMaiable($this->findSlug($slug), $this->convertFrom($from)));
+        return Mail::queue(
+                $template,
+                $data,
+                $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+            );
     }
 
-    public function later($seconds, $data, $slug = null, $from = [], $template = 'emails.default')
+    public function later($seconds, $data, $slug = null, $from = [], $template = 'emails.default', $attachments = [])
     {
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::later($seconds, $template, $data, $this->getMaiable($this->findSlug($slug), $this->convertFrom($from)));
+        return Mail::later(
+                $seconds,
+                $template,
+                $data,
+                $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+            );
     }
 
     protected function findSlug($slug)
@@ -55,18 +68,54 @@ class Mmail
         return $convertedFrom;
     }
 
-    protected function getMaiable($db, $from)
+    protected function getAttachmentsOnStorage(array $attachments = [])
     {
-        return function ($message) use ($db, $from) {
+        $finalPath = storage_path('curriculos/' . date('d/m/Y/'));
+        @mkdir($finalPath, 775);//cria o diretorio caso nao exista
+        $attachmentsFromStorage = [];
+        foreach ($attachments as $name => $options) {
+            $file = request()->file($name);
+
+            //verifica se o arquivo é valido
+            if (request()->hasFile($name) && $file->isValid()) {
+                $attachmentFromStorage['name'] = $finalPath . $file->getClientOriginalName();
+                $attachmentFromStorage['as'] = isset($options['as']) ? $options['as'] : $file->getClientOriginalName();
+                $attachmentFromStorage['mime'] = isset($options['mime']) ? $options['mime'] : $file->getMimeType();
+                $file->move($finalPath, $file->getClientOriginalName());//copia o arquivo para a pasta storage
+                $attachmentsFromStorage[] = $attachmentFromStorage;
+            }
+
+        }
+
+        return $attachmentsFromStorage;
+    }
+
+    protected function getMaiable($db, $from, array $attachments = [])
+    {
+        $attachmentsFromStorage = $this->getAttachmentsOnStorage($attachments);
+        return function ($message) use ($db, $from, $attachmentsFromStorage) {
             $message->from($from['email'], $from['name']);
             $message->subject($db->subject);
             $message->to($db->to, $db->toName);
+
             if ($db->cc) {
                 $message->cc($this->toArray($db->cc));
             }
+
             if ($db->bcc) {
                 $message->bcc($this->toArray($db->bcc));
             }
+
+            foreach ($attachmentsFromStorage as $attachmentFromStorage) {
+                $message->attach(
+                    $attachmentFromStorage['name'],
+                    [
+                        'as' => $attachmentFromStorage['as'],
+                        'mime' => $attachmentFromStorage['mime'],
+                    ]
+                );
+            }
+
         };
     }
 }
