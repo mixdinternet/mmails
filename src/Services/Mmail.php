@@ -8,71 +8,41 @@ use Mail;
 
 class Mmail
 {
-    public function __construct()
+    public function send($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default', $attachments = [])
     {
-
-    }
-
-    public function send($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
-    {
-        $db = $this->findSlug($slug);
-
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::send($template, $data, function ($message) use ($db, $from) {
-            $convertedFrom = $this->convertFrom($from);
-            $message->from($convertedFrom['email'], $convertedFrom['name']);
-            $message->subject($db->subject);
-            $message->to($db->to, $db->toName);
-            if ($db->cc) {
-                $message->cc($this->toArray($db->cc));
-            }
-            if ($db->bcc) {
-                $message->bcc($this->toArray($db->bcc));
-            }
-        });
+        return Mail::send(
+            $template,
+            $data,
+            $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+        );
     }
 
-    public function queue($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
+    public function queue($data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default', $attachments = [])
     {
-        $db = $this->findSlug($slug);
-
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::queue($template, $data, function ($message) use ($db, $from) {
-            $convertedFrom = $this->convertFrom($from);
-            $message->from($convertedFrom['email'], $convertedFrom['name']);
-            $message->subject($db->subject);
-            $message->to($db->to, $db->toName);
-            if ($db->cc) {
-                $message->cc($this->toArray($db->cc));
-            }
-            if ($db->bcc) {
-                $message->bcc($this->toArray($db->bcc));
-            }
-        });
+        return Mail::queue(
+            $template,
+            $data,
+            $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+        );
     }
 
-    public function later($seconds, $data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default')
+    public function later($seconds, $data, $slug = null, $from = [], $template = 'mixdinternet/admix::emails.default', $attachments = [])
     {
-        $db = $this->findSlug($slug);
-
         $data = (is_array($data)) ? $data : ['content' => $data];
-        return Mail::later($seconds, $template, $data, function ($message) use ($db, $from) {
-            $convertedFrom = $this->convertFrom($from);
-            $message->from($convertedFrom['email'], $convertedFrom['name']);
-            $message->subject($db->subject);
-            $message->to($db->to, $db->toName);
-            if ($db->cc) {
-                $message->cc($this->toArray($db->cc));
-            }
-            if ($db->bcc) {
-                $message->bcc($this->toArray($db->bcc));
-            }
-        });
+        return Mail::later(
+            $seconds,
+            $template,
+            $data,
+            $this->getMaiable($this->findSlug($slug), $this->convertFrom($from), $attachments)
+        );
     }
 
-    private function findSlug($slug)
+    protected function findSlug($slug)
     {
         $query = MmailModel::active();
+
         if ($slug) {
             $query->where('slug', $slug);
         }
@@ -86,16 +56,66 @@ class Mmail
         return $db;
     }
 
-    private function toArray($emails)
+    protected function toArray($emails)
     {
         return explode(',', str_replace(' ', '', $emails));
     }
 
-    private function convertFrom($from)
+    protected function convertFrom($from)
     {
         $convertedFrom['email'] = isset($from[0]) ? $from[0] : 'noreply@mixd.com.br';
         $convertedFrom['name'] = isset($from[1]) ? $from[1] : 'MIXD Internet';
-
         return $convertedFrom;
+    }
+
+    protected function getAttachmentsOnStorage(array $attachments = [])
+    {
+        $finalPath = storage_path('attachments/' . date('d/m/Y/'));
+        @mkdir($finalPath, 775);//cria o diretorio caso nao exista
+        $attachmentsFromStorage = [];
+        foreach ($attachments as $name => $options) {
+            $file = request()->file($name);
+
+            //verifica se o arquivo é valido
+            if (request()->hasFile($name) && $file->isValid()) {
+                $attachmentFromStorage['name'] = $finalPath . $file->getClientOriginalName();
+                $attachmentFromStorage['as'] = isset($options['as']) ? $options['as'] : $file->getClientOriginalName();
+                $attachmentFromStorage['mime'] = isset($options['mime']) ? $options['mime'] : $file->getMimeType();
+                $file->move($finalPath, $file->getClientOriginalName());//copia o arquivo para a pasta storage
+                $attachmentsFromStorage[] = $attachmentFromStorage;
+            }
+
+        }
+
+        return $attachmentsFromStorage;
+    }
+
+    protected function getMaiable($db, $from, array $attachments = [])
+    {
+        $attachmentsFromStorage = $this->getAttachmentsOnStorage($attachments);
+        return function ($message) use ($db, $from, $attachmentsFromStorage) {
+            $message->from($from['email'], $from['name']);
+            $message->subject($db->subject);
+            $message->to($db->to, $db->toName);
+
+            if ($db->cc) {
+                $message->cc($this->toArray($db->cc));
+            }
+
+            if ($db->bcc) {
+                $message->bcc($this->toArray($db->bcc));
+            }
+
+            foreach ($attachmentsFromStorage as $attachmentFromStorage) {
+                $message->attach(
+                    $attachmentFromStorage['name'],
+                    [
+                        'as' => $attachmentFromStorage['as'],
+                        'mime' => $attachmentFromStorage['mime'],
+                    ]
+                );
+            }
+
+        };
     }
 }
