@@ -71,7 +71,7 @@ class Mmail
     protected function getAttachmentsOnStorage(array $attachments = [])
     {
         $finalPath = storage_path('attachments/' . date('Y/m/d/'));
-        @mkdir($finalPath, 775, true);//cria o diretorio caso nao exista
+        @mkdir($finalPath, 0775, true);//cria o diretorio caso nao exista
         $attachmentsFromStorage = [];
         foreach ($attachments as $name => $options) {
             $file = request()->file($name);
