@@ -3,8 +3,8 @@
 namespace Mixdinternet\Mmails\Services;
 
 use App\Exceptions\AdmixException;
+use Illuminate\Support\Facades\Mail;
 use Mixdinternet\Mmails\Mmail as MmailModel;
-use Mail;
 
 class Mmail
 {
@@ -63,8 +63,9 @@ class Mmail
 
     protected function convertFrom($from)
     {
-        $convertedFrom['email'] = isset($from[0]) ? $from[0] : 'noreply@mixd.com.br';
-        $convertedFrom['name'] = isset($from[1]) ? $from[1] : 'MIXD Internet';
+        $convertedFrom['email'] = isset($from[0]) ? $from[0] : config('mail.from.address');
+        $convertedFrom['name'] = isset($from[1]) ? $from[1] : config('mail.from.name');
+
         return $convertedFrom;
     }
 
@@ -94,9 +95,10 @@ class Mmail
     {
         $attachmentsFromStorage = $this->getAttachmentsOnStorage($attachments);
         return function ($message) use ($db, $from, $attachmentsFromStorage) {
-            $message->from($from['email'], $from['name']);
+            $message->from(config('mail.from.address'), config('mail.from.name'));
             $message->subject($db->subject);
             $message->to($db->to, $db->toName);
+            $message->replyTo($from['email'], $from['name']);
 
             if ($db->cc) {
                 $message->cc($this->toArray($db->cc));
